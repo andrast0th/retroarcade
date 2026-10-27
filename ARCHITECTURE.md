@@ -1,0 +1,45 @@
+# Architecture
+
+Retroarcade is a browser arcade of retro games built with Phaser 3, TypeScript and Vite. It is a single-page app with one `Phaser.Game` instance. Every screen, whether the menu or a game, is a Phaser `Scene`.
+
+## Layout
+
+```
+index.html              page shell, mounts the canvas into #game
+src/main.ts             creates the Phaser.Game and lists all scenes
+src/scenes/MenuScene.ts launcher: lists games, shows high scores
+src/games/<name>/       one folder per game, each exporting a Scene
+src/shared/games.ts     menu registry (GAMES)
+src/shared/storage.ts   high-score persistence (localStorage)
+```
+
+## Runtime flow
+
+1. `main.ts` boots Phaser with all scenes registered; `MenuScene` is first in the list, so it starts first.
+2. The menu reads `GAMES` and each game's high score, and starts the selected scene by key.
+3. A game runs until it ends or the player presses Esc, then calls `this.scene.start('MenuScene')`.
+4. On finishing, a game calls `submitScore(sceneKey, score)`, and the menu shows the result next time.
+
+## Rendering
+
+The canvas has a fixed internal resolution of 320x240 with `pixelArt: true` (nearest-neighbour sampling). `Scale.FIT` scales it up to the window and keeps the aspect ratio. Game code works in these internal coordinates and ignores the window size. Sprites are generated at runtime (Pong draws from a 1x1 white texture) and no asset pipeline exists yet.
+
+## Physics
+
+Arcade physics is enabled globally in `main.ts`. Games use it for collisions and velocity, and each scene sets its own world-bounds behaviour.
+
+## Conventions
+
+- The scene key is the game's identity. It must be the same string in the scene's `super(...)` call, in `GAMES`, and in the `submitScore` call. This is how the menu launches the game and finds its high score.
+- Games must reset their state in `create()`, since Phaser reuses scene instances when a scene is restarted.
+- Shared code goes in `src/shared/`. Games should not import from each other.
+
+## Adding a game
+
+1. Create `src/games/<name>/<Name>Scene.ts` extending `Phaser.Scene`.
+2. Add the class to the `scene` array in `src/main.ts`.
+3. Add `{ title, scene }` to `GAMES` in `src/shared/games.ts`.
+
+## Not yet built
+
+Audio, a shared input layer, an asset pipeline, CRT/scanline post-processing, tests and linting.
