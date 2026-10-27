@@ -28,7 +28,7 @@ Games return to the menu with `this.scene.start('MenuScene')` (Esc during play).
 
 ## Specs
 
-Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `planner` agent (`.claude/agents/planner.md`) writes them.
+Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `planner` agent (`.claude/agents/planner.md`) writes them, and the `developer` agent (`.claude/agents/developer.md`) implements an approved spec.
 
 ### Edge cases every spec must cover
 
