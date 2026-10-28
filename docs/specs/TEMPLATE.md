@@ -32,6 +32,13 @@ One row per item in CLAUDE.md "Edge cases every spec must cover".
 |-----------|----------|------------|
 | | | FR / AC id, or n/a + reason |
 
+## Impact on games
+Platform specs only. One row per game in `src/games/`.
+
+| Game | What changes | Works unchanged? | Migration task |
+|------|--------------|------------------|----------------|
+| | | yes / no | task # or n/a |
+
 ## Risks, assumptions and dependencies
 | ID | Kind | Description | Owner | Mitigation |
 |----|------|-------------|-------|------------|

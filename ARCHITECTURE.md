@@ -1,16 +1,17 @@
 # Architecture
 
-Retroarcade is a browser arcade of retro games built with Phaser 3, TypeScript and Vite. It is a single-page app with one `Phaser.Game` instance. Every screen, whether the menu or a game, is a Phaser `Scene`.
+Retroarcade is a browser arcade of retro games built with Phaser 3, TypeScript and Vite. It is a single-page app with one `Phaser.Game` instance. Every screen, whether a menu or a game, is a Phaser `Scene`. The code is split between the platform (menus, options, settings and the shared contracts games depend on) and the games themselves.
 
 ## Layout
 
 ```
-index.html              page shell, mounts the canvas into #game
-src/main.ts             creates the Phaser.Game and lists all scenes
-src/scenes/MenuScene.ts launcher: lists games, shows high scores
-src/games/<name>/       one folder per game, each exporting a Scene
-src/shared/games.ts     menu registry (GAMES)
-src/shared/storage.ts   high-score persistence (localStorage)
+index.html                 page shell, mounts the canvas into #game
+src/main.ts                creates the Phaser.Game and lists all scenes
+src/platform/              platform scenes: menus, options, settings
+src/platform/MenuScene.ts  launcher: lists games, shows high scores
+src/games/<name>/          one folder per game, each exporting a Scene
+src/shared/games.ts        menu registry (GAMES)
+src/shared/storage.ts      high-score persistence (localStorage)
 ```
 
 ## Runtime flow
@@ -33,6 +34,7 @@ Arcade physics is enabled globally in `main.ts`. Games use it for collisions and
 - The scene key is the game's identity. It must be the same string in the scene's `super(...)` call, in `GAMES`, and in the `submitScore` call. This is how the menu launches the game and finds its high score.
 - Games must reset their state in `create()`, since Phaser reuses scene instances when a scene is restarted.
 - Shared code goes in `src/shared/`. Games should not import from each other.
+- Ownership: the platform owns `src/platform/`, `src/main.ts`, `index.html` and the existing APIs in `src/shared/`. A game owns its folder in `src/games/`. Game work may add new shared exports and register itself, but changing an existing shared API is platform work, and that work must migrate every game it affects.
 
 ## Adding a game
 

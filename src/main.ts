@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { MenuScene } from './scenes/MenuScene';
+import { MenuScene } from './platform/MenuScene';
 import { PongScene } from './games/pong/PongScene';
 
 new Phaser.Game({

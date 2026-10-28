@@ -15,8 +15,9 @@ There is no linter or test runner configured yet.
 
 ## Architecture
 
-A browser arcade built with Phaser 3, TypeScript and Vite. Each game is a Phaser `Scene`; `MenuScene` is the launcher.
+A browser arcade built with Phaser 3, TypeScript and Vite. Each game is a Phaser `Scene`. The platform (menus, options, settings) is a set of scenes in `src/platform/`, and `MenuScene` there is the launcher.
 
+- `src/platform/` holds platform scenes, starting with `MenuScene`.
 - `src/main.ts` creates the single `Phaser.Game` (default 320x240 internal resolution; games read sizes from `this.scale`, `pixelArt: true`, `Scale.FIT`, arcade physics) and holds the scene list.
 - `src/shared/games.ts` is the menu registry (`GAMES`). Each entry's `scene` must equal the scene key passed to `super(...)` in that game's scene class.
 - `src/shared/storage.ts` stores high scores in localStorage, keyed by scene key (`getHighScore` / `submitScore`). The menu reads these, so games must submit under the same scene key used in `GAMES`.
@@ -28,7 +29,16 @@ Games return to the menu with `this.scene.start('MenuScene')` (Esc during play).
 
 ## Specs
 
-Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `planner` agent (`.claude/agents/planner.md`) writes them, and the `developer` agent (`.claude/agents/developer.md`) implements an approved spec. The developer works in a git worktree at `../retroarcade-<slug>` on branch `feature/<slug>`, commits once per task and pushes that branch. It never touches `main` or opens a PR.
+Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. There are two pairs of agents in `.claude/agents/`:
+
+| Scope | Planner | Developer | Branch |
+|-------|---------|-----------|--------|
+| A single game in `src/games/<name>/` | `game-planner` | `game-developer` | `feature/<slug>` |
+| Platform: `src/platform/`, `src/main.ts`, `index.html`, `src/shared/` contracts | `platform-planner` | `platform-developer` | `platform/<slug>` |
+
+Each developer works in a git worktree at `../retroarcade-<slug>`, commits once per task and pushes only its branch. It never touches `main` or opens a PR.
+
+Ownership: game work may add new exports to `src/shared/` and register its scene in `src/main.ts` and `GAMES`, but must not change existing shared APIs or `src/platform/`. Those go to a platform spec as a dependency. A platform spec that changes a shared API lists every affected game in its "Impact on games" table, with a migration task for each.
 
 ### Edge cases every spec must cover
 
@@ -42,3 +52,15 @@ Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `p
 - **Resize:** the window resizes or the aspect ratio changes, and `Scale.FIT` keeps the game's frame intact.
 - **Input:** opposing keys are held together (up and down), and a key is held when the scene starts.
 - **Bounds:** fast objects tunnelling through paddles or walls, and objects leaving the world bounds.
+
+### Edge cases every platform spec must cover
+
+- **Navigation:** every screen can be reached and left by keyboard alone, Esc goes back one level, and the selection wraps at the ends of a list.
+- **Held keys:** a held arrow key repeats at a controlled rate, and a key held while a screen opens doesn't trigger it immediately.
+- **Settings with nothing stored:** every setting has a default, and first launch works with no stored settings.
+- **Old or invalid stored settings:** unknown keys, removed options, wrong types and out-of-range values from an older version are ignored or reset to the default, never crashing.
+- **Storage unavailable:** settings still work for the session when localStorage throws.
+- **When settings apply:** each setting says whether it applies immediately or at the next game launch, and a game started before it changes behaves consistently.
+- **Games and settings:** a game that doesn't read a setting still runs, and a game reads settings through the shared API, never from localStorage directly.
+- **Game list size:** the menu handles zero games, one game, and more games than fit on screen.
+- **Existing games:** every game in `src/games/` still builds, launches from the menu and returns with Esc.
