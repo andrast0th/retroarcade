@@ -58,6 +58,19 @@ No blocking questions remain. Q-1 to Q-4, Q-6, Q-10 and Q-11 were answered by th
 | A-11 | assumption | "The game just left" (Q-4) is kept in memory for the page session only (not in localStorage). On first boot, after a page reload, or if the remembered key is no longer in `GAMES`, the first row is selected. | |
 | A-12 | assumption | Held Up and Down together cancel out and the selection does not move. Enter held together with a navigation key: launch wins. | |
 
+## Spike findings (Task 2, Phaser 4.2.1)
+Measured in headless Chrome driven over CDP against the production build of `main`, with `game` exposed on `window` for the test only (not committed). Auto-repeat was simulated with `Input.dispatchKeyEvent` `autoRepeat: true`, which sets `KeyboardEvent.repeat`.
+
+| Item | Result |
+|------|--------|
+| Held-key repeat without `Key` objects (current menu) | One press plus 3 auto-repeat events produced 4 `keydown-DOWN` emissions (`repeat` true on 3 of them). Gap 3 confirmed: the OS repeat rate drives the selection. |
+| Held-key repeat with a `Key` object | The same input produced 1 emission. `Key` objects suppress repeats, but they cannot see a key that was already held before the scene opened: that key's first repeat event looks like a fresh press to a new `Key`. The menu therefore keeps its own platform-level held-key tracker (see Task 6 notes) and times repeats itself. |
+| R-1: double `scene.start('MenuScene')` | Three calls in one tick, and a real Esc with two `keydown-ESC` handlers both calling it, each end with `MenuScene` active, `PongScene` stopped, no console output, and the menu can launch Pong again. Harmless. The redundant Pong handler may stay until Task 5. |
+| R-2 / tab hidden: key state on blur | On `window` blur, Phaser resets its `Key` objects (`isDown` true to false) but emits no `keyup` to `keydown-*`/`keyup-*` listeners. The menu cannot rely on Phaser to clear its own held state, so it clears it on the game's `BLUR` and `HIDDEN` events. |
+| Unregistered scene key (gap 6) | `scene.start('Nope')` from the menu queues `stop MenuScene` then `start Nope`. Phaser only warns `Scene key not found: Nope`, so after it nothing is running (blank screen). `this.scene.manager.getScene(key)` returns `null` for an unregistered key and does not warn, so FR-7 can check it at draw time. |
+| Esc listener placement (R-3) | `Phaser.Scene.scene.start` is queued and applied on the next game update, so an Esc handler on `window` can call it from the active game scene. The handler looks the active scene up with `game.scene.getScenes(true)` and ignores any key not in `GAMES`. |
+| Test harness note | Headless Chrome stops animation frames after the first key event unless focus emulation is on (`Emulation.setFocusEmulationEnabled`). Needed for any automated check. |
+
 ## Functional requirements
 | ID | Requirement |
 |----|-------------|
