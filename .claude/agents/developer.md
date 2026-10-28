@@ -17,7 +17,7 @@ Before writing code, read the spec, CLAUDE.md, ARCHITECTURE.md, `src/main.ts`, `
 3. Follow the repo rules:
    - A new game is one scene in `src/games/<name>/`. Its scene key must be identical in `super(...)`, the `scene` array in `src/main.ts`, `GAMES` in `src/shared/games.ts` and `submitScore`.
    - Reset all game state in `create()`.
-   - Work in the 320x240 internal coordinates.
+   - Read the play area from `this.scale.width` / `this.scale.height` instead of hardcoding sizes. 320x240 is the default. A game that needs a different resolution or aspect ratio must have it in the spec, because the canvas is shared by every game.
    - Base movement on physics velocities or `delta`, not on frame count.
    - Code shared between games goes in `src/shared/`. Games never import from each other.
    - Esc returns to the menu.

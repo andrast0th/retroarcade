@@ -22,7 +22,7 @@ src/shared/storage.ts   high-score persistence (localStorage)
 
 ## Rendering
 
-The canvas has a fixed internal resolution of 320x240 with `pixelArt: true` (nearest-neighbour sampling). `Scale.FIT` scales it up to the window and keeps the aspect ratio. Game code works in these internal coordinates and ignores the window size. Sprites are generated at runtime (Pong draws from a 1x1 white texture) and no asset pipeline exists yet.
+The canvas has a default internal resolution of 320x240 with `pixelArt: true` (nearest-neighbour sampling). `Scale.FIT` scales it up to the window and keeps the aspect ratio. Game code reads the play area from `this.scale` rather than hardcoding sizes, and ignores the window size. A game that needs another resolution or aspect ratio specifies it in its spec, since the canvas is shared. Sprites are generated at runtime (Pong draws from a 1x1 white texture) and no asset pipeline exists yet.
 
 ## Physics
 

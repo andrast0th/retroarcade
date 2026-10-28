@@ -39,6 +39,6 @@ Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `p
 - **First play and ties:** there is no stored high score yet, and a score equal to the current best is handled.
 - **Frame rate:** movement and timers don't depend on the frame rate, using `delta` or physics velocities.
 - **Tab hidden:** the tab loses focus or is hidden mid-game.
-- **Resize:** the window resizes or the aspect ratio changes, and `Scale.FIT` keeps the 320x240 frame intact.
+- **Resize:** the window resizes or the aspect ratio changes, and `Scale.FIT` keeps the game's frame intact.
 - **Input:** opposing keys are held together (up and down), and a key is held when the scene starts.
-- **Bounds:** fast objects tunnelling through paddles or walls, and objects leaving the 320x240 world.
+- **Bounds:** fast objects tunnelling through paddles or walls, and objects leaving the world bounds.
