@@ -36,7 +36,6 @@ export class PongScene extends Phaser.Scene {
 
     this.scoreText = this.add.text(width / 2, 8, '0 : 0', { fontFamily: 'monospace', fontSize: '14px' }).setOrigin(0.5, 0);
     this.cursors = this.input.keyboard!.createCursorKeys();
-    this.input.keyboard!.on('keydown-ESC', () => this.scene.start('MenuScene'));
     this.serve();
   }
 
