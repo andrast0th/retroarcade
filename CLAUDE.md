@@ -17,7 +17,7 @@ There is no linter or test runner configured yet.
 
 A browser arcade built with Phaser 3, TypeScript and Vite. Each game is a Phaser `Scene`; `MenuScene` is the launcher.
 
-- `src/main.ts` creates the single `Phaser.Game` (320x240 internal resolution, `pixelArt: true`, `Scale.FIT`, arcade physics) and holds the scene list.
+- `src/main.ts` creates the single `Phaser.Game` (default 320x240 internal resolution; games read sizes from `this.scale`, `pixelArt: true`, `Scale.FIT`, arcade physics) and holds the scene list.
 - `src/shared/games.ts` is the menu registry (`GAMES`). Each entry's `scene` must equal the scene key passed to `super(...)` in that game's scene class.
 - `src/shared/storage.ts` stores high scores in localStorage, keyed by scene key (`getHighScore` / `submitScore`). The menu reads these, so games must submit under the same scene key used in `GAMES`.
 - `src/games/<name>/` holds one game per folder.
