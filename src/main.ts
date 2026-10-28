@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import { MenuScene } from './platform/MenuScene';
 import { PongScene } from './games/pong/PongScene';
+import { installExitToMenu } from './platform/exitToMenu';
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: 320,
@@ -13,3 +14,5 @@ new Phaser.Game({
   physics: { default: 'arcade' },
   scene: [MenuScene, PongScene],
 });
+
+installExitToMenu(game);

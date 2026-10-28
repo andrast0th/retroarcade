@@ -15,7 +15,7 @@ There is no linter or test runner configured yet.
 
 ## Architecture
 
-A browser arcade built with Phaser 3, TypeScript and Vite. Each game is a Phaser `Scene`. The platform (menus, options, settings) is a set of scenes in `src/platform/`, and `MenuScene` there is the launcher.
+A browser arcade built with Phaser 4, TypeScript and Vite. Each game is a Phaser `Scene`. The platform (menus, options, settings) is a set of scenes in `src/platform/`, and `MenuScene` there is the launcher.
 
 - `src/platform/` holds platform scenes, starting with `MenuScene`.
 - `src/main.ts` creates the single `Phaser.Game` (default 320x240 internal resolution; games read sizes from `this.scale`, `pixelArt: true`, `Scale.FIT`, arcade physics) and holds the scene list.
@@ -25,7 +25,7 @@ A browser arcade built with Phaser 3, TypeScript and Vite. Each game is a Phaser
 
 Adding a game takes three edits: create the scene, register it in the `scene` array in `src/main.ts`, and add it to `GAMES`. Missing either registration fails silently or at runtime, not at typecheck.
 
-Games return to the menu with `this.scene.start('MenuScene')` (Esc during play).
+Esc returns to the menu from any game. A platform-owned handler (`src/platform/exitToMenu.ts`, installed from `src/main.ts`) does this for every scene whose key is in `GAMES`, so games must not add their own Esc handler.
 
 ## Specs
 
