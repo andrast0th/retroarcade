@@ -28,7 +28,7 @@ Games return to the menu with `this.scene.start('MenuScene')` (Esc during play).
 
 ## Specs
 
-Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `planner` agent (`.claude/agents/planner.md`) writes them, and the `developer` agent (`.claude/agents/developer.md`) implements an approved spec.
+Specs live in `docs/specs/<slug>.md` and follow `docs/specs/TEMPLATE.md`. The `planner` agent (`.claude/agents/planner.md`) writes them, and the `developer` agent (`.claude/agents/developer.md`) implements an approved spec. The developer works in a git worktree at `../retroarcade-<slug>` on branch `feature/<slug>`, commits once per task and pushes that branch. It never touches `main` or opens a PR.
 
 ### Edge cases every spec must cover
 
